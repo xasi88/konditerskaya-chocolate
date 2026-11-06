@@ -21,6 +21,7 @@ button,input,textarea{font:inherit;color:inherit}
 button{background:none;border:0;cursor:pointer}
 a{color:inherit;text-decoration:none}
 .skryt{position:absolute;width:0;height:0}
+[hidden]{display:none!important}
 :focus-visible{outline:2px solid var(--yagoda);outline-offset:2px}
 h1{font-weight:600;font-size:clamp(30px,8.4vw,52px);line-height:1.1;letter-spacing:-.01em}
 h2{font-weight:600;font-size:clamp(26px,6.4vw,38px);line-height:1.15}
@@ -65,11 +66,29 @@ h2{font-weight:600;font-size:clamp(26px,6.4vw,38px);line-height:1.15}
 .razdel{padding:48px 20px 0;max-width:1180px;margin:0 auto}
 .razdel h2{margin-bottom:6px}
 .razdel>.pod{margin-bottom:20px;max-width:560px}
-.tovary,.galereya{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 12px}
-.tovar img,.tort img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:var(--r-foto);background:var(--moti-svet)}
-.tovar h3{font-weight:600;font-size:18px;line-height:1.2;margin:10px 0 2px}
-.tovar .opis{font-size:14px;color:var(--tishe);line-height:1.35;min-height:38px}
-.tovar .cena{font-weight:500;font-size:15px;margin:6px 0 10px;font-variant-numeric:tabular-nums}
+.galereya{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 12px}
+.tort img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:var(--r-foto);background:var(--moti-svet)}
+
+/* Десерты: группы и строки */
+.gruppa+.gruppa{margin-top:36px}
+.gruppa h3,.nachinki h3{font-weight:600;font-size:clamp(22px,5.4vw,28px);line-height:1.2}
+.spisok{display:grid}
+.str{display:grid;grid-template-columns:64px minmax(0,1fr);gap:14px;padding:14px 0;border-bottom:1px solid var(--liniya)}
+.str img,.zagl{width:64px;height:80px;object-fit:cover;border-radius:14px;background:var(--moti-svet)}
+.zagl{display:flex;align-items:center;justify-content:center;color:var(--moloko)}
+.zagl svg{width:28px;height:28px;opacity:.4}
+.str-t{display:flex;flex-direction:column;justify-content:center;min-height:80px}
+.str h4{font-weight:500;font-size:17px;line-height:1.25}
+.str .opis{font-size:14px;color:var(--tishe);line-height:1.35;margin-top:2px}
+.str-niz{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px}
+.cena{font-weight:600;font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bez-foto .str{grid-template-columns:minmax(0,1fr);padding:12px 0}
+.bez-foto .str-t{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:12px;min-height:0}
+.bez-foto .str-niz{display:contents}
+.bez-foto .cena{grid-column:1;margin-top:2px}
+.bez-foto .tovar-kn{grid-column:2;grid-row:1/span 3}
+.str .v-korz{width:auto;padding:0 16px}
+.str .shag{width:120px}
 .v-korz{min-height:44px;width:100%;border-radius:var(--r-kn);background:var(--moti-svet);font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px;transition:transform .15s}
 .v-korz:active{transform:scale(.97)}
 .v-korz svg{width:18px;height:18px}
@@ -81,13 +100,35 @@ h2{font-weight:600;font-size:clamp(26px,6.4vw,38px);line-height:1.15}
 .tort:active{transform:scale(.98)}
 .tort span{display:block;font-weight:500;font-size:16px;line-height:1.25;margin-top:8px}
 
+/* Сроки и начинки */
+.sroki{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px}
+.sroki span{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border-radius:18px;background:var(--moti-svet);font-weight:500;font-size:15px}
+.sroki svg{width:18px;height:18px;color:var(--yagoda)}
+.kn-ryad{display:grid;gap:12px;margin-top:20px}
+.kn-ryad .kn-vtor{margin-top:0}
+.nachinki{margin-top:48px}
+.nachinki>.pod{margin:6px 0 16px}
+.nach-spisok{display:grid;gap:12px}
+.nach{display:flex;flex-direction:column;padding:20px;border-radius:var(--r-foto);background:var(--moti-svet)}
+.nach h4{font-weight:600;font-size:20px;margin-bottom:10px}
+.nach ul{list-style:none;display:grid;gap:6px;margin-bottom:16px}
+.nach li{position:relative;padding-left:18px;font-size:15px;line-height:1.35}
+.nach li::before{content:"";position:absolute;left:2px;top:.5em;width:7px;height:7px;border-radius:50%;background:var(--yagoda)}
+.nach .mel{margin:-6px 0 16px}
+.nach .kn{margin-top:auto;min-height:48px;font-size:16px;background:var(--belyj)}
+.eshche-z{font-weight:600;font-size:18px;margin:28px 0 10px}
+.eshche-spisok{display:grid;gap:8px}
+.eshche-spisok button{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:52px;padding:8px 12px 8px 14px;border-radius:14px;border:1.5px solid var(--liniya);text-align:left;font-weight:500;font-size:15px;line-height:1.25;transition:transform .15s}
+.eshche-spisok button:active{transform:scale(.97)}
+.eshche-spisok svg{width:18px;height:18px;flex:none;color:var(--yagoda)}
+
 /* Фуршет и адрес */
 .furshet{display:grid;gap:20px}
 .furshet img{width:100%;aspect-ratio:4/5;max-height:440px;object-fit:cover;border-radius:var(--r-foto)}
 .furshet .pod{margin-bottom:20px}
 .gde{padding-bottom:16px}
 .adr-big{font-weight:500;font-size:20px;margin:8px 0 2px}
-.svyaz-knopki{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.svyaz-knopki{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}
 .svyaz-knopki a{display:flex;align-items:center;gap:10px;min-height:52px;padding:0 16px;border-radius:var(--r-kn);border:1.5px solid var(--liniya);font-weight:500}
 .svyaz-knopki a:first-child{background:var(--yagoda);border-color:var(--yagoda);color:#fff}
 .svyaz-knopki svg{width:22px;height:22px;flex:none}
@@ -118,16 +159,20 @@ h2{font-weight:600;font-size:clamp(26px,6.4vw,38px);line-height:1.15}
 .list>.svyaz-knopki{margin-bottom:24px}
 .korz-spisok{padding:0 20px}
 .korz-str{display:grid;grid-template-columns:64px 1fr 132px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--liniya)}
-.korz-str img{width:64px;height:80px;object-fit:cover;border-radius:12px}
+.korz-str img,.korz-str .zagl{width:64px;height:80px;object-fit:cover;border-radius:12px}
+.korz-itog{display:flex;justify-content:space-between;align-items:baseline;font-size:18px;font-weight:500}
+.korz-itog b{font-weight:600;font-size:22px;font-variant-numeric:tabular-nums}
+.srok{margin-top:-4px}
 .korz-str b{font-weight:500;line-height:1.25}
 .korz-pusto{padding:12px 0 8px;color:var(--tishe)}
 .korz-niz,.zakaz-forma{padding:16px 20px calc(24px + env(safe-area-inset-bottom));display:grid;gap:14px}
 .zakaz-forma{padding-top:0}
 .zakaz-forma .list-verh{margin:0 -20px}
 .pole{display:grid;gap:6px;font-size:14px;color:var(--tishe)}
-.pole input,.pole textarea{width:100%;min-height:48px;padding:10px 14px;border:1.5px solid var(--liniya);border-radius:14px;background:#fff;color:var(--tekst);font-size:17px}
+.pole input,.pole textarea,.pole select{width:100%;min-height:48px;padding:10px 14px;border:1.5px solid var(--liniya);border-radius:14px;background:#fff;color:var(--tekst);font-size:17px}
+.pole select{font:inherit;font-size:17px;color:var(--tekst)}
 .pole textarea{resize:vertical}
-.pole input:focus,.pole textarea:focus{border-color:var(--yagoda);outline:0}
+.pole input:focus,.pole textarea:focus,.pole select:focus{border-color:var(--yagoda);outline:0}
 .dva{display:grid;grid-template-columns:1.3fr 1fr;gap:12px}
 .tip{border:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .tip legend{font-size:14px;color:var(--tishe);margin-bottom:6px}
@@ -149,12 +194,15 @@ h2{font-weight:600;font-size:clamp(26px,6.4vw,38px);line-height:1.15}
 .pojav{opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s cubic-bezier(.2,.8,.2,1)}
 .pojav.vid{opacity:1;transform:none}
 
-@media (max-width:359px){.logo{gap:8px}.logo svg{width:28px;height:28px}.logo b{font-size:19px}.vyv{padding:0 12px}}
+@media (max-width:359px){.svyaz-knopki a{gap:8px;padding:0 10px}.logo{gap:8px}.logo svg{width:28px;height:28px}.logo b{font-size:19px}.vyv{padding:0 12px}}
 
 /* Планшет и компьютер */
 @media (min-width:640px){
-  .tovary{grid-template-columns:repeat(4,minmax(0,1fr));gap:28px 16px}
+  .spisok{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px}
   .galereya{grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 16px}
+  .kn-ryad{display:flex;flex-wrap:wrap}
+  .nach-spisok{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .eshche-spisok{grid-template-columns:repeat(2,minmax(0,1fr))}
   .furshet{grid-template-columns:1fr 1fr;align-items:center;gap:32px}
   .kn-vtor{width:auto;display:inline-flex}
   .svyaz-knopki{grid-template-columns:repeat(4,auto);justify-content:start}
@@ -183,16 +231,19 @@ h2{font-weight:600;font-size:clamp(26px,6.4vw,38px);line-height:1.15}
   .veer{height:420px;margin:0}
   .veer img{width:230px}
   .veer img.p0{width:260px}
-  .tovary{gap:32px 20px}
+  .spisok{grid-template-columns:repeat(3,minmax(0,1fr))}
   .galereya{grid-template-columns:repeat(4,minmax(0,1fr));gap:32px 20px}
+  .nach-spisok{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .eshche-spisok{grid-template-columns:repeat(3,minmax(0,1fr))}
   .razdel{padding-top:64px}
   .list{margin:0 0 0 auto;height:100dvh;max-height:100dvh;max-width:440px;border-radius:var(--r-list) 0 0 var(--r-list)}
   .list[open]{animation-name:sprava}
   @keyframes sprava{from{transform:translateX(40px);opacity:0}}
 }
 @media (hover:hover){
-  .tort:hover img,.tovar:hover img{transform:scale(1.02)}
-  .tort img,.tovar img{transition:transform .3s}
+  .tort:hover img{transform:scale(1.02)}
+  .tort img{transition:transform .3s}
+  .eshche-spisok button:hover{border-color:var(--moti)}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}

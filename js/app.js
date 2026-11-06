@@ -20,14 +20,21 @@
       '-720.webp 720w" sizes="(min-width:900px) 280px, 50vw" width="360" height="450" alt="' + alt + '"' +
       (lenivo ? ' loading="lazy"' : "") + ">";
   }
-  function cena(t) { return t.cena ? t.cena.toLocaleString("ru-RU") + " ₽" : "Цена по запросу"; }
+  function rub(n) { return n.toLocaleString("ru-RU") + " ₽"; }
+  function cena(t) { return t.cena ? rub(t.cena) : "Цена по запросу"; }
   function waSsylka(tekst) { return "https://wa.me/" + D.telefon + (tekst ? "?text=" + encodeURIComponent(tekst) : ""); }
+  /* Маленькое фото товара. Фото ещё нет: плашка со значком торта */
+  function minifoto(t) {
+    return t.foto ? '<img src="img/menu/' + t.foto + '-360.webp" width="64" height="80" alt="' + t.nazv + '" loading="lazy">' :
+      '<span class="zagl"><svg aria-hidden="true"><use href="#i-tortik"/></svg></span>';
+  }
 
   /* Данные на странице */
   $$("[data-adres]").forEach(function (el) { el.textContent = "Дуба-Юрт, ул. Кадырова, 123. " + D.chasy; });
   $$("[data-adres-1]").forEach(function (el) { el.textContent = D.adres; });
   $$("[data-chasy]").forEach(function (el) { el.textContent = D.chasy; });
   $$("[data-wa]").forEach(function (el) { el.href = waSsylka("Здравствуйте!"); el.target = "_blank"; el.rel = "noopener"; });
+  $$("[data-wa-tekst]").forEach(function (el) { el.href = waSsylka(el.dataset.waTekst); el.target = "_blank"; el.rel = "noopener"; });
   var svyaz = '<a href="' + waSsylka("Здравствуйте!") + '" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg>WhatsApp</a>' +
     '<a href="tel:+' + D.telefon + '"><svg><use href="#i-tel"/></svg>Позвонить</a>' +
     '<a href="' + D.karta + '" target="_blank" rel="noopener"><svg><use href="#i-karta"/></svg>Маршрут</a>' +
@@ -44,17 +51,33 @@
   requestAnimationFrame(function () { setTimeout(function () { veer.classList.add("otkryt"); }, 150); });
   veer.addEventListener("click", function () { poryadok.push(poryadok.shift()); rasstavit(); });
 
-  /* Десерты */
-  var tovary = $(".tovary");
+  /* Десерты: группы и строки */
   function knopkaTovara(id) {
-    var n = korzina[id] || 0;
-    if (!n) return '<button type="button" class="v-korz" data-plus="' + id + '"><svg><use href="#i-plus"/></svg>В корзину</button>';
-    return '<div class="shag"><button type="button" data-minus="' + id + '" aria-label="Меньше"><svg><use href="#i-minus"/></svg></button>' +
-      '<output>' + n + ' шт.</output><button type="button" data-plus="' + id + '" aria-label="Больше"><svg><use href="#i-plus"/></svg></button></div>';
+    var n = korzina[id] || 0, nazv = poId[id].nazv;
+    if (!n) return '<button type="button" class="v-korz" data-plus="' + id + '" aria-label="В корзину: ' + nazv + '"><svg><use href="#i-plus"/></svg>В корзину</button>';
+    return '<div class="shag"><button type="button" data-minus="' + id + '" aria-label="Меньше: ' + nazv + '"><svg><use href="#i-minus"/></svg></button>' +
+      '<output>' + n + ' шт.</output><button type="button" data-plus="' + id + '" aria-label="Больше: ' + nazv + '"><svg><use href="#i-plus"/></svg></button></div>';
   }
-  tovary.innerHTML = D.deserty.map(function (t) {
-    return '<article class="tovar pojav">' + foto(t.id, t.nazv, true) + "<h3>" + t.nazv + '</h3><p class="opis">' + t.opis +
-      '</p><p class="cena">' + cena(t) + '</p><div class="tovar-kn" data-kn="' + t.id + '">' + knopkaTovara(t.id) + "</div></article>";
+  function stroka(t, sFoto) {
+    return '<article class="str pojav">' + (sFoto ? minifoto(t) : "") + '<div class="str-t"><h4>' + t.nazv + "</h4>" + (t.opis ? '<p class="opis">' + t.opis + "</p>" : "") +
+      '<div class="str-niz"><span class="cena">' + cena(t) + '</span><div class="tovar-kn" data-kn="' + t.id + '">' + knopkaTovara(t.id) + "</div></div></div></article>";
+  }
+  /* В группе нет ни одного фото: короткие строки без плашек. Придёт фото: плашки вернутся сами */
+  $(".gruppy").innerHTML = D.gruppy.map(function (g) {
+    var ryad = D.deserty.filter(function (t) { return t.gr === g.id; });
+    var sFoto = ryad.some(function (t) { return t.foto; });
+    return '<div class="gruppa" id="gr-' + g.id + '"><h3>' + g.nazv + '</h3><div class="spisok' + (sFoto ? "" : " bez-foto") + '">' +
+      ryad.map(function (t) { return stroka(t, sFoto); }).join("") + "</div></div>";
+  }).join("");
+
+  /* Начинки тортов: кнопка открывает заявку с этой начинкой */
+  $(".nach-spisok").innerHTML = D.nachinki.map(function (n) {
+    return '<article class="nach pojav"><h4>' + n.nazv + "</h4><ul>" + n.sloi.map(function (s) { return "<li>" + s + "</li>"; }).join("") + "</ul>" +
+      (n.primech ? '<p class="mel">' + n.primech + "</p>" : "") +
+      '<button type="button" class="kn" data-nachinka="' + n.nazv + '">Заказать с этой начинкой</button></article>';
+  }).join("");
+  $(".eshche-spisok").innerHTML = D.eshche.map(function (n) {
+    return '<button type="button" class="pojav" data-nachinka="' + n + '"><span>' + n + '</span><svg aria-hidden="true"><use href="#i-plus"/></svg></button>';
   }).join("");
 
   /* Торты */
@@ -81,14 +104,23 @@
     obnovit(id, d > 0);
     if (d > 0 && n === 1) tost("Добавлено в корзину");
   }
+  /* Сумма корзины. Есть товар без цены: null, сумму не показываем */
+  function summa() {
+    var s = 0, vse = true;
+    Object.keys(korzina).forEach(function (id) { if (poId[id].cena) s += poId[id].cena * korzina[id]; else vse = false; });
+    return vse ? s : null;
+  }
   function risovatKorzinu() {
     var ids = D.deserty.map(function (t) { return t.id; }).filter(function (id) { return korzina[id]; });
     $(".korz-spisok").innerHTML = ids.length ? ids.map(function (id) {
       var t = poId[id];
-      return '<div class="korz-str"><img src="img/menu/' + id + '-360.webp" alt=""><div><b>' + t.nazv + '</b><div class="mel">' + cena(t) +
+      return '<div class="korz-str">' + minifoto(t) + '<div><b>' + t.nazv + '</b><div class="mel">' + cena(t) +
         '</div></div><div class="tovar-kn" data-kn="' + id + '">' + knopkaTovara(id) + "</div></div>";
     }).join("") : '<p class="korz-pusto">Корзина пуста. Добавьте десерты из меню или закажите торт.</p>';
     $("[data-otpravit-korz]").hidden = !ids.length;
+    var s = summa(), itog = $(".korz-itog");
+    itog.hidden = !ids.length || s === null;
+    if (s !== null) $("b", itog).textContent = rub(s);
   }
   document.addEventListener("click", function (e) {
     var p = e.target.closest("[data-plus]"), m = e.target.closest("[data-minus]");
@@ -104,9 +136,13 @@
   });
 
   $("[data-otpravit-korz]").addEventListener("click", function () {
-    var stroki = D.deserty.filter(function (t) { return korzina[t.id]; }).map(function (t) { return "• " + t.nazv + ": " + korzina[t.id] + " шт."; });
+    var stroki = D.deserty.filter(function (t) { return korzina[t.id]; }).map(function (t) {
+      return "• " + t.nazv + ": " + korzina[t.id] + " шт." + (t.cena ? ", " + rub(t.cena * korzina[t.id]) : "");
+    });
     if (!stroki.length) return;
-    var tekst = "Здравствуйте! Хочу заказать:\n" + stroki.join("\n") + "\n\nЕсть ли это в наличии и сколько будет стоить?" + (imya ? "\nМеня зовут " + imya + "." : "");
+    var s = summa();
+    var tekst = "Здравствуйте! Хочу заказать:\n" + stroki.join("\n") + (s !== null ? "\nИтого: " + rub(s) : "") +
+      "\n\n" + (s !== null ? "Есть ли это в наличии?" : "Есть ли это в наличии и сколько будет стоить?") + (imya ? "\nМеня зовут " + imya + "." : "");
     window.open(waSsylka(tekst), "_blank", "noopener");
   });
 
@@ -122,8 +158,17 @@
     blok.hidden = !primer;
     if (primer) { $("img", blok).src = "img/menu/" + primer.id + "-360.webp"; $("b", blok).textContent = primer.nazv; }
   }
-  function tipNadpis() { $("[data-nadpis]").hidden = forma.elements.tip.value === "Фуршет"; }
+  var poleNach = forma.elements.nachinka;
+  D.nachinki.map(function (n) { return n.nazv; }).concat(D.eshche).forEach(function (n) { poleNach.add(new Option(n, n)); });
+  /* Срок и поля торта зависят от того, что заказывают */
+  var SROK = { "Торт": "Торт заказывайте за день.", "Бенто-торт": "Бенто-торт готовим за 2 часа.", "Фуршет": "" };
+  function tipNadpis() {
+    var tip = forma.elements.tip.value;
+    $$("[data-tolko-tort]").forEach(function (el) { el.hidden = tip === "Фуршет"; });
+    var srok = $("[data-srok]"); srok.textContent = SROK[tip] || ""; srok.hidden = !SROK[tip];
+  }
   $$('input[name="tip"]').forEach(function (r) { r.addEventListener("change", tipNadpis); });
+  tipNadpis();
   $(".primer-x").addEventListener("click", function () { pokazatPrimer(null); });
   forma.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -132,11 +177,13 @@
     var data = new Date(poleData.value + "T12:00").toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" });
     var s = [tip === "Фуршет" ? "Здравствуйте! Хочу обсудить сладкий стол (фуршет)." : "Здравствуйте! Хочу заказать " + tip.toLowerCase() + "."];
     if (primer) s.push("Как на фото: https://www.instagram.com/p/" + primer.post + "/");
+    var nach = tip !== "Фуршет" ? f.nachinka.value : "";
+    if (nach) s.push("Начинка: " + nach);
     s.push("Дата: " + data + (f.vremya.value ? ", к " + f.vremya.value : ""));
     if (f.gosti.value) s.push("Гостей: " + f.gosti.value);
     if (tip !== "Фуршет" && f.nadpis.value.trim()) s.push("Надпись: «" + f.nadpis.value.trim() + "»");
     if (f.pozh.value.trim()) s.push("Пожелания: " + f.pozh.value.trim());
-    s.push("", tip === "Фуршет" ? "Подскажите, пожалуйста, что можно собрать и сколько это будет стоить." : "Подскажите, пожалуйста, вес, начинку и цену.");
+    s.push("", tip === "Фуршет" ? "Подскажите, пожалуйста, что можно собрать и сколько это будет стоить." : (nach ? "Подскажите, пожалуйста, вес и цену." : "Подскажите, пожалуйста, вес, начинку и цену."));
     if (imya) s.push("Меня зовут " + imya + ".");
     window.open(waSsylka(s.join("\n")), "_blank", "noopener");
   });
@@ -170,7 +217,14 @@
     if (otkrytyj) { var l = otkrytyj; otkrytyj = null; l.close(); }
   });
   document.addEventListener("click", function (e) {
-    var b = e.target.closest("[data-otkryt]"), t = e.target.closest("[data-tort]");
+    var b = e.target.closest("[data-otkryt]"), t = e.target.closest("[data-tort]"), n = e.target.closest("[data-nachinka]");
+    if (n) {
+      pokazatPrimer(null);
+      $$('input[name="tip"]').forEach(function (r) { r.checked = r.value === "Торт"; });
+      poleNach.value = n.dataset.nachinka;
+      tipNadpis();
+      otkryt("zakaz");
+    }
     if (b) {
       if (b.dataset.otkryt === "zakaz") {
         pokazatPrimer(null);
