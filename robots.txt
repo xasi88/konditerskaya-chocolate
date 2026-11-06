@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://xasi88.github.io/konditerskaya-chocolate/sitemap.xml
